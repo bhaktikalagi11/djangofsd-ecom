@@ -1,0 +1,40 @@
+
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} | Northstar{% endblock %}
+
+{% block content %}
+    <p class="muted"><a href="{% url 'home' %}">Shop</a> / {{ product.name }}</p>
+    <section class="detail-layout">
+        <div>
+            {% if product.image %}
+                <img class="product-image" src="{{ product.image }}" alt="{{ product.name }}">
+            {% else %}
+                <div class="image-placeholder" aria-hidden="true">✦</div>
+            {% endif %}
+        </div>
+        <div class="detail-copy">
+            <h1 class="page-heading">{{ product.name }}</h1>
+            <p class="price">₹{{ product.price }}</p>
+            <p class="stock">{% if product.stock > 0 %}{{ product.stock }} in stock{% else %}Currently out of stock{% endif %}</p>
+            <p>{{ product.description|linebreaksbr }}</p>
+            <div class="actions">
+                {% if user.is_authenticated and product.stock > 0 %}
+                    <form method="post" action="{% url 'add_to_cart' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Add to cart</button>
+                    </form>
+                {% elif not user.is_authenticated %}
+                    <a class="button" href="{% url 'login' %}">Log in to shop</a>
+                {% endif %}
+                <a class="button button-secondary" href="{% url 'home' %}">Continue shopping</a>
+            </div>
+            {% if user.is_staff %}
+                <div class="actions admin-actions">
+                    <a class="button button-secondary" href="{% url 'update_product' product.id %}">Update product</a>
+                    <a class="button button-danger" href="{% url 'delete_product' product.id %}">Delete product</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

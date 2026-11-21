@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Northstar Shop{% endblock %}</title>
+    <style>
+        :root { color-scheme: light; --ink: #17231e; --muted: #64736c; --green: #176b4d; --green-dark: #10543c; --line: #e2e9e5; --paper: #fff; --canvas: #f4f7f5; --red: #a83b38; }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--canvas); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.55; }
+        a { color: var(--green); text-decoration: none; }
+        a:hover { color: var(--green-dark); text-decoration: underline; }
+        .site-header { background: var(--paper); border-bottom: 1px solid var(--line); }
+        .nav-wrap { align-items: center; display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; margin: 0 auto; max-width: 1160px; padding: 16px 24px; }
+        .brand { color: var(--ink); font-size: 1.2rem; font-weight: 800; letter-spacing: -.04em; }
+        .nav-links { align-items: center; display: flex; flex-wrap: wrap; gap: 18px; }
+        .nav-links a, .nav-links button { color: var(--ink); font: inherit; }
+        .nav-links form { margin: 0; }
+        .page { margin: 0 auto; max-width: 1160px; padding: 40px 24px 64px; }
+        .page-heading { margin: 0 0 8px; font-size: clamp(1.8rem, 4vw, 2.5rem); letter-spacing: -.05em; line-height: 1.15; }
+        .intro, .muted { color: var(--muted); }
+        .toolbar { align-items: center; display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; margin: 24px 0; }
+        .search { display: flex; flex: 1 1 280px; gap: 8px; max-width: 520px; }
+        input, textarea, select { background: var(--paper); border: 1px solid #cbd6d0; border-radius: 9px; color: var(--ink); font: inherit; padding: 11px 13px; width: 100%; }
+        input:focus, textarea:focus, select:focus { border-color: var(--green); outline: 3px solid #176b4d22; }
+        button, .button { align-items: center; background: var(--green); border: 1px solid var(--green); border-radius: 9px; color: #fff; cursor: pointer; display: inline-flex; font: inherit; font-weight: 700; justify-content: center; padding: 10px 15px; text-decoration: none; transition: background .15s, transform .15s; }
+        button:hover, .button:hover { background: var(--green-dark); color: #fff; text-decoration: none; transform: translateY(-1px); }
+        .button-secondary { background: #fff; border-color: var(--line); color: var(--ink); }
+        .button-secondary:hover { background: #f2f6f3; color: var(--ink); }
+        .button-danger { background: var(--red); border-color: var(--red); }
+        .button-danger:hover { background: #872e2b; }
+        .product-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+        .card, .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 24px #17231e08; }
+        .product-card { overflow: hidden; }
+        .product-image { background: #edf2ef; display: block; height: 190px; object-fit: cover; width: 100%; }
+        .image-placeholder { align-items: center; background: #e9f1ec; color: var(--green); display: flex; font-size: 2rem; height: 190px; justify-content: center; }
+        .card-body { padding: 18px; }
+        .card-body h2, .card-body h3 { margin: 0 0 8px; }
+        .price { color: var(--green); font-size: 1.2rem; font-weight: 800; }
+        .stock { color: var(--muted); font-size: .9rem; }
+        .actions { align-items: center; display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+        .actions form { margin: 0; }
+        .admin-actions { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 14px; }
+        .panel { margin: 0 auto; max-width: 620px; padding: clamp(22px, 5vw, 38px); }
+        .panel-wide { max-width: 820px; }
+        .form-panel form p { margin: 0 0 18px; }
+        .form-panel label { display: block; font-weight: 700; margin-bottom: 6px; }
+        .helptext { color: var(--muted); display: block; font-size: .88rem; margin-top: 5px; }
+        .errorlist { color: var(--red); margin: 5px 0; padding-left: 20px; }
+        .messages { display: grid; gap: 8px; margin: 0 auto 20px; max-width: 1160px; padding: 0 24px; }
+        .message { background: #e8f4ed; border: 1px solid #c7e4d1; border-radius: 10px; color: #155538; padding: 12px 16px; }
+        .message.error { background: #fff0ef; border-color: #f2cfcc; color: #8c2824; }
+        .cart-row, .order-card { align-items: center; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; padding: 18px; }
+        .cart-row + .cart-row, .order-card + .order-card { border-top: 1px solid var(--line); }
+        .cart-total { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 20px; text-align: right; }
+        .empty-state { background: var(--paper); border: 1px dashed #cbd6d0; border-radius: 16px; color: var(--muted); padding: 32px; text-align: center; }
+        .detail-layout { display: grid; gap: 30px; grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr); }
+        .detail-layout .product-image, .detail-layout .image-placeholder { border-radius: 16px; height: min(460px, 60vw); }
+        .detail-copy { padding: 10px 0; }
+        @media (max-width: 650px) { .nav-wrap { align-items: flex-start; flex-direction: column; } .page { padding: 28px 16px 48px; } .detail-layout { grid-template-columns: 1fr; } .detail-layout .product-image, .detail-layout .image-placeholder { height: 280px; } .search { max-width: none; } }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-wrap" aria-label="Main navigation">
+            <a class="brand" href="{% url 'home' %}">Northstar<span style="color: var(--green)">.</span></a>
+            <div class="nav-links">
+                <a href="{% url 'home' %}">Shop</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'view_cart' %}">Cart</a>
+                    <a href="{% url 'my_orders' %}">My orders</a>
+                    {% if user.is_staff %}<a href="{% url 'add_product' %}">Add product</a>{% endif %}
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="button-secondary" type="submit">Log out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Log in</a>
+                    <a class="button" href="{% url 'register' %}">Create account</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+    {% if messages %}
+        <div class="messages" role="status" aria-live="polite">
+            {% for message in messages %}
+                <div class="message{% if message.tags == 'error' %} error{% endif %}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <main class="page">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
+```

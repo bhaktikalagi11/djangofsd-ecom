@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ product.name }} | Northstar{% endblock %}
+
+{% block content %}
+    <section class="panel">
+        <p class="muted"><a href="{% url 'home' %}">Shop</a> / Delete product</p>
+        <h1 class="page-heading">Delete this product?</h1>
+        <p class="intro">You are about to permanently remove <strong>{{ product.name }}</strong>. This cannot be undone.</p>
+        <form method="post" class="actions">
+            {% csrf_token %}
+            <button class="button-danger" type="submit">Yes, delete product</button>
+            <a class="button button-secondary" href="{% url 'product_detail' product.id %}">Keep product</a>
+        </form>
+    </section>
+{% endblock %}

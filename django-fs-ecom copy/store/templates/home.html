@@ -1,0 +1,55 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Shop | Northstar{% endblock %}
+
+{% block content %}
+    <h1 class="page-heading">Find your next favorite</h1>
+    <p class="intro">Thoughtfully chosen essentials, ready to make everyday better.</p>
+    <div class="toolbar">
+        <form class="search" method="get" role="search">
+            <input type="search" name="q" value="{{ query }}" placeholder="Search products" aria-label="Search products">
+            <button type="submit">Search</button>
+        </form>
+        {% if user.is_staff %}
+            <a class="button button-secondary" href="{% url 'add_product' %}">＋ Add product</a>
+        {% endif %}
+    </div>
+    <section class="product-grid" aria-label="Products">
+        {% for product in products %}
+            <article class="card product-card">
+                <a href="{% url 'product_detail' product.id %}" aria-label="View {{ product.name }}">
+                    {% if product.image %}
+                        <img class="product-image" src="{{ product.image }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="image-placeholder" aria-hidden="true">✦</div>
+                    {% endif %}
+                </a>
+                <div class="card-body">
+                    <h2><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h2>
+                    <p class="price">₹{{ product.price }}</p>
+                    <p class="stock">{% if product.stock > 0 %}{{ product.stock }} in stock{% else %}Currently out of stock{% endif %}</p>
+                    <div class="actions">
+                        {% if user.is_authenticated and product.stock > 0 %}
+                            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                                {% csrf_token %}
+                                <button type="submit">Add to cart</button>
+                            </form>
+                        {% elif not user.is_authenticated %}
+                            <a class="button" href="{% url 'login' %}">Log in to shop</a>
+                        {% endif %}
+                        <a class="button button-secondary" href="{% url 'product_detail' product.id %}">Details</a>
+                    </div>
+                    {% if user.is_staff %}
+                        <div class="actions admin-actions">
+                            <a href="{% url 'update_product' product.id %}">Update</a>
+                            <a href="{% url 'delete_product' product.id %}" style="color: var(--red)">Delete</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+            <p class="empty-state">No products found. Try a different search.</p>
+        {% endfor %}
+    </section>
+{% endblock %}

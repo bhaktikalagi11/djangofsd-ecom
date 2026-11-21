@@ -1,0 +1,37 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Your cart | Northstar{% endblock %}
+
+{% block content %}
+    <h1 class="page-heading">Your cart</h1>
+    <p class="intro">Review your picks before you check out.</p>
+    {% if cart_items %}
+        <section class="panel panel-wide">
+            {% for item in cart_items %}
+                <article class="cart-row">
+                    <div>
+                        <h2>{{ item.product.name }}</h2>
+                        <p class="muted">{{ item.quantity }} × ₹{{ item.product.price }}</p>
+                    </div>
+                    <strong>₹{{ item.subtotal }}</strong>
+                    <form method="post" action="{% url 'remove_cart' item.product.id %}">
+                        {% csrf_token %}
+                        <button class="button-danger" type="submit">Remove</button>
+                    </form>
+                </article>
+            {% endfor %}
+            <div class="cart-total">
+                <p class="muted">Order total</p>
+                <h2>₹{{ total }}</h2>
+                <a class="button" href="{% url 'checkout' %}">Proceed to checkout</a>
+            </div>
+        </section>
+    {% else %}
+        <div class="empty-state">
+            <h2>Your cart is waiting for something good.</h2>
+            <p>Browse the shop and add a product to get started.</p>
+            <a class="button" href="{% url 'home' %}">Browse products</a>
+        </div>
+    {% endif %}
+{% endblock %}
